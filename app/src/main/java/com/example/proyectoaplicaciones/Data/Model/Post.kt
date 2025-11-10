@@ -1,6 +1,6 @@
-package com.example.proyectoaplicaciones.Model
+package com.example.proyectoaplicaciones.Data.Model
 
-data class PostData(
+data class Post(
     val id: Int,
     val title: String,
     val content: String,
