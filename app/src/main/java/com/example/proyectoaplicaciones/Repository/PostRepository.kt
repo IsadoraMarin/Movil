@@ -1,11 +1,14 @@
 package com.example.proyectoaplicaciones.Repository
 
+import com.example.proyectoaplicaciones.Data.Model.Comentarios
 import com.example.proyectoaplicaciones.Data.Model.Post
 import com.example.proyectoaplicaciones.Data.Remote.RetroFitInstance
 
 class PostRepository{
-    suspend fun getPostsByCategory(Categoria: String): List<Post>{
-        return apiService.getPostsByCategory(Categoria)
+    private val apiService = RetroFitInstance.api
+
+    suspend fun getPostsByCategory(categoria: String): List<Post>{
+        return apiService.getPostsByCategory(categoria)
     }
 
     suspend fun addPost(post: Post) {
@@ -13,6 +16,7 @@ class PostRepository{
     }
 
     suspend fun addComment(postId: Int, comment: String, author: String) {
-        apiService.addComment(postId, Comment(comment, author))
+        val newComment = Comentarios(id = 0, name = author, email = "", body = comment)
+        apiService.addComment(postId, newComment)
     }
 }

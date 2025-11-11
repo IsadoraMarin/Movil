@@ -2,8 +2,8 @@ package com.example.proyectoaplicaciones.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.proyectoaplicaciones.Repository.PostRepository
 import com.example.proyectoaplicaciones.Data.Model.Post
+import com.example.proyectoaplicaciones.Repository.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,8 +33,8 @@ class PostViewModel : ViewModel(){
             try {
                 _popularPosts.value = repository.getPostsByCategory("Popular")
                 _newsPosts.value = repository.getPostsByCategory("Noticias")
-                _communityPosts = repository.getPostsByCategory("Comunidades")
-                _postList.value = repository.getPosts()
+                _communityPosts.value = repository.getPostsByCategory("Comunidades")
+                _postList.value = _popularPosts.value + _newsPosts.value + _communityPosts.value
             }catch (e: Exception){
                 println("Error al obtener los datos: ${e.localizedMessage}")
             }
@@ -44,8 +44,9 @@ class PostViewModel : ViewModel(){
     fun publishPost(title: String, content: String, autor: String, category: String) {
         viewModelScope.launch {
             try {
-                repository.addPost(Post(title = title, content = content, autor = autor, category = category))
-                fetchAllPosts() // refrescar después de agregar
+                val newPost = Post(id = 0, title = title, body = content, userId = autor.toIntOrNull() ?: 0, category = category)
+                repository.addPost(newPost)
+                fetchPosts() // refrescar después de agregar
             } catch (e: Exception) {
                 println("Error al publicar post: ${e.localizedMessage}")
             }
@@ -56,7 +57,7 @@ class PostViewModel : ViewModel(){
         viewModelScope.launch {
             try {
                 repository.addComment(postId, comment, autor)
-                fetchAllPosts() // refrescar para mostrar comentarios actualizados
+                fetchPosts() // refrescar para mostrar comentarios actualizados
             } catch (e: Exception) {
                 println("Error al agregar comentario: ${e.localizedMessage}")
             }
@@ -64,4 +65,3 @@ class PostViewModel : ViewModel(){
     }
 
 }
-

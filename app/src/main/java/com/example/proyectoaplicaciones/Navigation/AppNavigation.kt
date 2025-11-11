@@ -1,6 +1,9 @@
 package com.example.proyectoaplicaciones.Navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,19 +22,24 @@ sealed class Screen(val route: String){
 
 @Composable
 fun AppNavigation(navController: NavHostController, viewModel: PostViewModel) {
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Popular.route
-    ) {
-        composable(route = Screen.Popular.route) {
-            PopularScreen(viewModel = viewModel)
-        }
-        composable(route = Screen.Noticias.route) {
-            NewsScreen(viewModel = viewModel)
-        }
-        composable(route = Screen.Comunidad.route) {
-            CommunityScreen(viewModel = viewModel)
-        }
-    }
+   Scaffold(
+       bottomBar = {BottomNavBar(navController)}
+   ){ innerPadding ->
+       NavHost(
+           navController = navController,
+           startDestination = Screen.Popular.route,
+           modifier = Modifier.padding(innerPadding)
+       ){
+           composable(Screen.Popular.route){
+               PopularScreen(viewModel)
+           }
+           composable(Screen.Noticias.route){
+               NewsScreen(viewModel)
+           }
+           composable(Screen.Comunidad.route){
+               CommunityScreen(viewModel)
+           }
+       }
+   }
 }
 
