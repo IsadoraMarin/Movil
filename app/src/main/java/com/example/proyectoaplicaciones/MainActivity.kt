@@ -1,31 +1,43 @@
 package com.example.proyectoaplicaciones
 
 import android.os.Bundle
-import com.example.proyectoaplicaciones.ui.Screens.PopularScreen
-import androidx.core.view.WindowCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.Surface
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.proyectoaplicaciones.Navigation.AppNavigation
+import com.example.proyectoaplicaciones.ViewModel.PostViewModel
 import com.example.proyectoaplicaciones.ui.theme.ProyectoAplicacionesTheme
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        // Ajuste visual para usar el contenido en pantalla completa (opcional)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
+
+        // Composable principal de la app
         setContent {
             ProyectoAplicacionesTheme {
-                val postViewModel: com.example.proyectoaplicaciones.ViewModel.PostViewModel = viewModel()
-                PopularScreen(viewModel = postViewModel)
+
+                // 1️⃣ Creamos el controlador de navegación
+                val navController = rememberNavController()
+
+                // 2️⃣ Obtenemos una instancia del ViewModel
+                val postViewModel: PostViewModel = viewModel()
+
+                // 3️⃣ Mostramos la navegación principal
+                Surface {
+                    AppNavigation(
+                        navController = navController,
+                        viewModel = postViewModel
+                    )
                 }
             }
         }
     }
+}
