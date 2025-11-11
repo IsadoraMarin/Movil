@@ -1,6 +1,8 @@
 package com.example.proyectoaplicaciones
 
 import android.os.Bundle
+import com.example.proyectoaplicaciones.ui.Screens.PopularScreen
+import androidx.core.view.WindowCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,37 +13,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectoaplicaciones.ui.theme.ProyectoAplicacionesTheme
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         enableEdgeToEdge()
         setContent {
             ProyectoAplicacionesTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val postViewModel: com.example.proyectoaplicaciones.ViewModel.PostViewModel = viewModel()
+                PopularScreen(viewModel = postViewModel)
                 }
             }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ProyectoAplicacionesTheme {
-        Greeting("Android")
-    }
-}
