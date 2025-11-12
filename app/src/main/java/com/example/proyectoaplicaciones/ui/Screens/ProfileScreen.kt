@@ -1,7 +1,7 @@
 package com.example.proyectoaplicaciones.ui.screens
 
 import android.Manifest
-import android.net.Uri
+import android.net.Uri 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
