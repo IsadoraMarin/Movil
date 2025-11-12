@@ -2,7 +2,7 @@ package com.example.proyectoaplicaciones.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons 
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Newspaper
