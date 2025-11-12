@@ -6,10 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectoaplicaciones.Navigation.AppNavigation
-import com.example.proyectoaplicaciones.ViewModel.PostViewModel
 import com.example.proyectoaplicaciones.ui.theme.ProyectoAplicacionesTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,18 +22,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProyectoAplicacionesTheme {
 
-
+                // Creamos el controlador de navegación
                 val navController = rememberNavController()
 
-
-                val postViewModel: PostViewModel = viewModel()
-
-
+                // Mostramos la navegación principal
                 Surface {
-                    AppNavigation(
-                        navController = navController,
-                        viewModel = postViewModel
-                    )
+                    AppNavigation(navController = navController)
                 }
             }
         }
