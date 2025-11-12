@@ -7,6 +7,9 @@ import com.example.proyectoaplicaciones.Repository.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PostViewModel : ViewModel(){
     private val repository = PostRepository()
@@ -44,7 +47,9 @@ class PostViewModel : ViewModel(){
     fun publishPost(title: String, content: String, autor: String, category: String) {
         viewModelScope.launch {
             try {
-                val newPost = Post(id = 0, title = title, body = content, userId = autor.toIntOrNull() ?: 0, category = category)
+                val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss", Locale.getDefault())
+                val currentDate = sdf.format(Date())
+                val newPost = Post(id = 0, title = title, content = content, categoria = category, autor = autor, date = currentDate)
                 repository.addPost(newPost)
                 fetchPosts() // refrescar después de agregar
             } catch (e: Exception) {

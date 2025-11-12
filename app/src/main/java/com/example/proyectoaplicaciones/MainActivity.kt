@@ -24,13 +24,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProyectoAplicacionesTheme {
 
-                // 1️⃣ Creamos el controlador de navegación
+
                 val navController = rememberNavController()
 
-                // 2️⃣ Obtenemos una instancia del ViewModel
+
                 val postViewModel: PostViewModel = viewModel()
 
-                // 3️⃣ Mostramos la navegación principal
+
                 Surface {
                     AppNavigation(
                         navController = navController,

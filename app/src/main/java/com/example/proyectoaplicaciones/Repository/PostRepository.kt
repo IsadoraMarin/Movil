@@ -16,7 +16,7 @@ class PostRepository{
     }
 
     suspend fun addComment(postId: Int, comment: String, author: String) {
-        val newComment = Comentarios(id = 0, name = author, email = "", body = comment)
+        val newComment = Comentarios(id = 0, name = author, email = "temp@gmail.com", body = comment)
         apiService.addComment(postId, newComment)
     }
 }

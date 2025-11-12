@@ -1,6 +1,7 @@
 package com.example.proyectoaplicaciones.Navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Face
@@ -17,9 +18,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun BottomNavBar(navController: NavController){
     val items = listOf(
         BottomNavItem(
+            name = "Home",
+            route = Screen.Home.route,
+            icon = Icons.Default.Home
+        ),
+        BottomNavItem(
             name = "Populares",
             route = Screen.Popular.route,
-            icon = Icons.Default.Home
+            icon = Icons.Default.Favorite
         ),
         BottomNavItem(
             name = "Noticias",

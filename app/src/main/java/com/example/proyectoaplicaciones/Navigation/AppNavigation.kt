@@ -12,9 +12,12 @@ import com.example.proyectoaplicaciones.ViewModel.PostViewModel
 import com.example.proyectoaplicaciones.ui.Screens.PopularScreen
 import com.example.proyectoaplicaciones.ui.Screens.CommunityScreen
 import com.example.proyectoaplicaciones.ui.Screens.NewsScreen
+import com.example.proyectoaplicaciones.ui.Screens.HomeScreen
 
 
 sealed class Screen(val route: String){
+
+    object Home : Screen("Home")
     object Popular : Screen("Popular")
     object Noticias : Screen("Noticias")
     object Comunidad : Screen("Comunidad")
@@ -30,6 +33,9 @@ fun AppNavigation(navController: NavHostController, viewModel: PostViewModel) {
            startDestination = Screen.Popular.route,
            modifier = Modifier.padding(innerPadding)
        ){
+           composable(Screen.Home.route){
+               HomeScreen(navController)
+           }
            composable(Screen.Popular.route){
                PopularScreen(viewModel)
            }
@@ -42,4 +48,3 @@ fun AppNavigation(navController: NavHostController, viewModel: PostViewModel) {
        }
    }
 }
-
