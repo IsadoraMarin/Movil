@@ -13,14 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.proyectoaplicaciones.ViewModel.AuthViewModel
+import com.example.proyectoaplicaciones.ViewModel.PostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePostScreen(navController: NavController) {
+fun CreatePostScreen(navController: NavController, postViewModel: PostViewModel, authViewModel: AuthViewModel) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
     var isTitleEmpty by remember { mutableStateOf(false) }
     var isContentEmpty by remember { mutableStateOf(false) }
+
+    val authState by authViewModel.uiState.collectAsState()
 
     fun validateFields(): Boolean {
         isTitleEmpty = title.isBlank()
@@ -75,7 +79,12 @@ fun CreatePostScreen(navController: NavController) {
             Button(
                 onClick = {
                     if (validateFields()) {
-                        // TODO: Llamar al ViewModel para guardar la publicación
+                        postViewModel.publishPost(
+                            title = title,
+                            content = content,
+                            autor = authState.username, // Obtenemos el nombre del autor
+                            categoria = "Comunidad" // Asumimos que se publica en Comunidad
+                        )
                         navController.popBackStack()
                     }
                 },
