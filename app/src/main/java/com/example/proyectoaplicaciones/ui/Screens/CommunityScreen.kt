@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.Screens
+package com.example.proyectoaplicaciones.ui.screens
 
 
 
