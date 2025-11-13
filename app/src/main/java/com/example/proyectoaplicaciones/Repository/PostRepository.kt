@@ -2,13 +2,15 @@ package com.example.proyectoaplicaciones.Repository
 
 import com.example.proyectoaplicaciones.Data.Model.Comentarios
 import com.example.proyectoaplicaciones.Data.Model.Post
+import com.example.proyectoaplicaciones.Data.Model.Rating
 import com.example.proyectoaplicaciones.Data.Remote.RetroFitInstance
 
-class PostRepository{
+class PostRepository {
     private val apiService = RetroFitInstance.api
 
-    suspend fun getPostsByCategory(categoria: String): List<Post>{
-        return apiService.getPostsByCategory(categoria)
+    // Llama a la nueva función que obtiene todos los posts
+    suspend fun getPosts(): List<Post> {
+        return apiService.getPosts()
     }
 
     suspend fun addPost(post: Post) {
@@ -16,7 +18,18 @@ class PostRepository{
     }
 
     suspend fun addComment(postId: Int, comment: String, author: String) {
-        val newComment = Comentarios(id = 0, name = author, email = "temp@gmail.com", body = comment)
-        apiService.addComment(postId, newComment)
+        apiService.addComment(postId, Comentarios(0, author, "", comment))
+    }
+
+    suspend fun updatePost(postId: Int, post: Post) {
+        apiService.updatePost(postId, post)
+    }
+
+    suspend fun deletePost(postId: Int) {
+        apiService.deletePost(postId)
+    }
+
+    suspend fun ratePost(postId: Int, value: Boolean) {
+        apiService.ratePost(postId, Rating(value))
     }
 }
