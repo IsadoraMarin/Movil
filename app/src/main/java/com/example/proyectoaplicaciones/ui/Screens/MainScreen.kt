@@ -31,7 +31,3 @@ fun MainScreen(mainNavController: NavController, authViewModel: AuthViewModel, p
         }
     }
 }
-    ProyectoAplicacionesTheme {
-        HomeScreen(navController = rememberNavController())
-    }
-}
