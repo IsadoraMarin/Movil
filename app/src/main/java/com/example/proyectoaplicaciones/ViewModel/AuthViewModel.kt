@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ViewModel
+package com.example.proyectoaplicaciones.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// Data class to hold the state of the authentication UI
 data class AuthUiState(
     val email: String = "",
     val isEmailValid: Boolean = true,
