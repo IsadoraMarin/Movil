@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.proyectoaplicaciones.ViewModel.AuthViewModel
-import com.example.proyectoaplicaciones.ViewModel.PostViewModel
+import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
+import com.example.proyectoaplicaciones.viewmodel.PostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,11 +79,13 @@ fun CreatePostScreen(navController: NavController, postViewModel: PostViewModel,
             Button(
                 onClick = {
                     if (validateFields()) {
+                        // Aquí usamos el userId del estado de autenticación.
+                        // Si no hay un usuario (lo cual es improbable aquí), usamos un ID por defecto.
+                        val userId = if(authState.isAuthenticated) authState.username.hashCode() else 0
                         postViewModel.publishPost(
                             title = title,
                             content = content,
-                            autor = authState.username, // Obtenemos el nombre del autor
-                            categoria = "Comunidad" // Asumimos que se publica en Comunidad
+                            autorId = userId
                         )
                         navController.popBackStack()
                     }
