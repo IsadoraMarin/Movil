@@ -1,7 +1,7 @@
 package com.example.proyectoaplicaciones.ui.screens
 
 import android.Manifest
-import android.net.Uri 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -10,21 +10,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.* 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.proyectoaplicaciones.Navigation.Screen
-import com.example.proyectoaplicaciones.ViewModel.AuthViewModel
+import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
+import com.example.proyectoaplicaciones.viewmodel.AuthUiState
 
 @Composable
 fun ProfileScreen(navController: NavController, authViewModel: AuthViewModel) {
@@ -75,7 +78,7 @@ private fun GuestProfileScreen(navController: NavController) {
 @Composable
 private fun UserProfileScreen(
     navController: NavController, 
-    uiState: com.example.proyectoaplicaciones.ViewModel.AuthUiState, 
+    uiState: AuthUiState, 
     authViewModel: AuthViewModel
 ) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -141,14 +144,36 @@ private fun UserProfileScreen(
         Text(uiState.username, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text(uiState.email, style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = { navController.navigate(Screen.EditProfile.route) }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-            Text("Editar Perfil")
+        
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column {
+                ProfileOptionItem(Icons.Default.Favorite, "Mis Favoritos") { navController.navigate(Screen.Favorites.route) }
+                Divider()
+                ProfileOptionItem(Icons.Default.Edit, "Editar Perfil") { navController.navigate(Screen.EditProfile.route) }
+            }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedButton(onClick = { authViewModel.logout() }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Default.Logout, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+            Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
             Text("Cerrar Sesión")
         }
+    }
+}
+
+@Composable
+fun ProfileOptionItem(icon: ImageVector, title: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(title, style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
     }
 }
