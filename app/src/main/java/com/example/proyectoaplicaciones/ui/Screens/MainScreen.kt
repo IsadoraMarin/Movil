@@ -11,8 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectoaplicaciones.Navigation.BottomNavBar
 import com.example.proyectoaplicaciones.Navigation.Screen
-import com.example.proyectoaplicaciones.ViewModel.AuthViewModel
-import com.example.proyectoaplicaciones.ViewModel.PostViewModel
+import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
+import com.example.proyectoaplicaciones.viewmodel.PostViewModel
 
 @Composable
 fun MainScreen(mainNavController: NavController, authViewModel: AuthViewModel, postViewModel: PostViewModel) {
@@ -23,9 +23,9 @@ fun MainScreen(mainNavController: NavController, authViewModel: AuthViewModel, p
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             NavHost(bottomBarNavController, startDestination = Screen.Popular.route) {
-                composable(Screen.Popular.route) { PopularScreen(viewModel = postViewModel) }
-                composable(Screen.Noticias.route) { NewsScreen(viewModel = postViewModel) }
-                composable(Screen.Comunidad.route) { CommunityScreen(navController = mainNavController, viewModel = postViewModel) } 
+                composable(Screen.Popular.route) { PopularScreen(navController = mainNavController, viewModel = postViewModel, authViewModel = authViewModel) } 
+                composable(Screen.Noticias.route) { NewsScreen(navController = mainNavController, viewModel = postViewModel, authViewModel = authViewModel) } 
+                composable(Screen.Comunidad.route) { CommunityScreen(navController = mainNavController, viewModel = postViewModel, authViewModel = authViewModel) } 
                 composable(Screen.Profile.route) { ProfileScreen(navController = mainNavController, authViewModel = authViewModel) } 
             }
         }
