@@ -60,12 +60,37 @@ fun PostDetailScreen(navController: NavController, postViewModel: PostViewModel,
             Column(
                 modifier = Modifier.weight(1f).padding(horizontal = 16.dp).verticalScroll(rememberScrollState())
             ) {
-                // ... Contenido del post y valoraciones ...
-                
+                Text(text = post.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Por Usuario #${post.userId}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Divider(modifier = Modifier.padding(vertical = 16.dp))
+                Text(text = post.body, style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Fila de valoraciones simplificada
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { postViewModel.handleVote(post.id, VoteType.LIKE) }) {
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = "Me Gusta",
+                            tint = if (userVote == VoteType.LIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(post.score.toString(), fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(onClick = { postViewModel.handleVote(post.id, VoteType.DISLIKE) }) {
+                        Icon(
+                            imageVector = Icons.Default.ThumbDown,
+                            contentDescription = "No me Gusta",
+                            tint = if (userVote == VoteType.DISLIKE) MaterialTheme.colorScheme.error else LocalContentColor.current
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
                 Text("Comentarios", style = MaterialTheme.typography.headlineSmall)
-
-                // Lista de comentarios
+                
                 comments.forEach { comment ->
                     Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                         Row(
@@ -76,7 +101,6 @@ fun PostDetailScreen(navController: NavController, postViewModel: PostViewModel,
                                 Text(comment.name, fontWeight = FontWeight.Bold)
                                 Text(comment.body)
                             }
-                            // Botón de eliminar visible para el autor o un moderador
                             if (authState.isModerator || authState.username == comment.name) {
                                 IconButton(onClick = { postViewModel.deleteComment(comment.id) }) {
                                     Icon(Icons.Default.Delete, contentDescription = "Eliminar Comentario", tint = MaterialTheme.colorScheme.error)
@@ -87,7 +111,6 @@ fun PostDetailScreen(navController: NavController, postViewModel: PostViewModel,
                 }
             }
             
-            // Campo para añadir un nuevo comentario
             if (authState.isAuthenticated) {
                 Row(
                     modifier = Modifier.padding(16.dp),
