@@ -1,6 +1,6 @@
 package com.example.proyectoaplicaciones.ui.screens
 
-import androidx.compose.foundation.background 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,7 +20,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.proyectoaplicaciones.ViewModel.AuthViewModel
+import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 import com.example.proyectoaplicaciones.Navigation.Screen
 
 @Composable
