@@ -1,12 +1,13 @@
 package com.example.proyectoaplicaciones.Data.Model
 
+/**
+ * Define la estructura de una publicación.
+ * @param score La puntuación total del post (likes - dislikes).
+ */
 data class Post(
+    val userId: Int,
     val id: Int,
     val title: String,
-    val content: String,
-    val categoria: String,
-    var likes: Int = 0,
-    var comentarios: Int = 0,
-    val autor: String,
-    val date: String
+    val body: String,
+    var score: Int = 0 // El único contador de popularidad
 )
