@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.proyectoaplicaciones.ViewModel.AuthViewModel
+import com.example.proyectoaplicaciones.ViewModel.PostViewModel
 import com.example.proyectoaplicaciones.ui.screens.*
 
 // Sealed class para las rutas de la aplicación
@@ -26,6 +27,7 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(navController: NavHostController) {
     val authViewModel: AuthViewModel = viewModel()
+    val postViewModel: PostViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Welcome.route) {
         // Flujo de Autenticación
@@ -41,7 +43,7 @@ fun AppNavigation(navController: NavHostController) {
 
         // Contenido Principal de la App
         composable(Screen.Main.route) {
-            MainScreen(mainNavController = navController, authViewModel = authViewModel)
+            MainScreen(mainNavController = navController, authViewModel = authViewModel, postViewModel = postViewModel)
         }
         
         // Pantallas de "detalle" que se muestran por encima de la navegación principal
@@ -49,7 +51,8 @@ fun AppNavigation(navController: NavHostController) {
             EditProfileScreen(navController = navController, authViewModel = authViewModel)
         }
         composable(Screen.CreatePost.route) {
-            CreatePostScreen(navController = navController)
+            CreatePostScreen(navController = navController, postViewModel = postViewModel, authViewModel = authViewModel)
         }
     }
 }
+
