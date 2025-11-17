@@ -2,6 +2,8 @@ package com.example.proyectoaplicaciones.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.proyectoaplicaciones.Data.Model.Role
+import com.example.proyectoaplicaciones.Data.Model.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,9 +20,9 @@ data class AuthUiState(
     val authError: String? = null,
     val isLoading: Boolean = false,
     val isAuthSuccessful: Boolean = false, // Evento para navegar
-    val isAuthenticated: Boolean = false, // Estado persistente de autenticación
+    val isAuthenticated: Boolean = false, // Estado persistente de autenticaciÃ³n
     val isGuest: Boolean = false,
-    val isModerator: Boolean = false // Nuevo estado para el rol de moderador
+    val user: User? = null
 )
 
 class AuthViewModel : ViewModel() {
@@ -74,9 +76,10 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             delay(1500)
-            val username = _uiState.value.username
-            val isModerator = username.equals("admin", ignoreCase = true)
-            _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, isAuthenticated = true, isGuest = false, isModerator = isModerator) }
+            // Respuesta de Backend ¡Posiblemente funcione mejor con SpringBoot!
+            val role = if (_uiState.value.username.equals("admin", ignoreCase = true)) Role.MODERATOR else Role.USER
+            val user = User(1, _uiState.value.username, role, "fake-token")
+            _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, isAuthenticated = true, isGuest = false, user = user) }
         }
     }
 
@@ -85,9 +88,9 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             delay(2000)
-            val username = _uiState.value.username
-            val isModerator = username.equals("admin", ignoreCase = true)
-            _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, isAuthenticated = true, isGuest = false, isModerator = isModerator) }
+            //Otra simulacion de Backend
+            val user = User(1, _uiState.value.username, Role.USER, "fake-token")
+            _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, isAuthenticated = true, isGuest = false, user = user) }
         }
     }
     

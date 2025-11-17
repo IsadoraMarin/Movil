@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.proyectoaplicaciones.Data.Model.Role
 import com.example.proyectoaplicaciones.Navigation.Screen
 import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 import com.example.proyectoaplicaciones.viewmodel.PostViewModel
@@ -65,11 +66,11 @@ fun NewsScreen(navController: NavController, viewModel: PostViewModel, authViewM
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.ThumbUp, contentDescription = "PuntuaciÃ³n", modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(post.score.toString(), style = MaterialTheme.typography.bodySmall)
                                 Spacer(modifier = Modifier.weight(1f))
-                                if (authState.isModerator) {
+                                if (authState.user?.role == Role.MODERATOR) {
                                     IconButton(onClick = { viewModel.deletePost(post.id) }) {
                                         Icon(Icons.Default.Delete, contentDescription = "Eliminar Post", tint = MaterialTheme.colorScheme.error)
                                     }

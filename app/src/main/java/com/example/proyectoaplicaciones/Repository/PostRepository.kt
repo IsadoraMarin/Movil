@@ -8,7 +8,7 @@ import com.example.proyectoaplicaciones.Data.Remote.RetroFitInstance
 class PostRepository {
     private val apiService = RetroFitInstance.api
 
-    // Llama a la nueva función que obtiene todos los posts
+
     suspend fun getPosts(): List<Post> {
         return apiService.getPosts()
     }
