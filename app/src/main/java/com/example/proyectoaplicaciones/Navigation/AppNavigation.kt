@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.Navigation
+package  com.example.proyectoaplicaciones.Navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
