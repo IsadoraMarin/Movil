@@ -1,9 +1,6 @@
 package com.example.proyectoaplicaciones.Data.Model
 
-/**
- * Define la estructura de una publicación.
- * @param score La puntuación total del post (likes - dislikes).
- */
+//Esto es para el tema de la validacion y que funcione en el backend
 data class Post(
     val userId: Int,
     val id: Int,
