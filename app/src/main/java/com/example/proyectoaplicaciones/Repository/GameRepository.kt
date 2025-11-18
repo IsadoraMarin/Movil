@@ -5,7 +5,7 @@ import com.example.proyectoaplicaciones.Data.Remote.ExternalApiService
 
 class GameRepository(private val externalApiService: ExternalApiService) {
 
-    // Reemplaza "TU_API_KEY" con tu clave de API real de RAWG.
+    //Aqui va la API consumible
     private val apiKey = "b2d276310a0a415eb7d52b922fcb3d3c" //????????
 
 
