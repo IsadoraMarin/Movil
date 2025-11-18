@@ -1,10 +1,7 @@
 package com.example.proyectoaplicaciones.Navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,6 +25,7 @@ fun BottomNavBar(navController: NavController) {
     val items = listOf(
         BottomNavItem("Populares", Screen.Popular.route, Icons.Default.Star),
         BottomNavItem("Noticias", Screen.Noticias.route, Icons.Default.Info),
+        BottomNavItem("Juegos", Screen.Games.route, Icons.Default.SportsEsports),
         BottomNavItem("Comunidad", Screen.Comunidad.route, Icons.Default.Edit),
         BottomNavItem("Perfil", Screen.Profile.route, Icons.Default.AccountCircle)
     )

@@ -1,6 +1,7 @@
 package com.example.proyectoaplicaciones.ui.screens
 
 import androidx.compose.foundation.layout.*
+import com.example.proyectoaplicaciones.Data.Model.Role
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -101,7 +102,7 @@ fun PostDetailScreen(navController: NavController, postViewModel: PostViewModel,
                                 Text(comment.name, fontWeight = FontWeight.Bold)
                                 Text(comment.body)
                             }
-                            if (authState.isModerator || authState.username == comment.name) {
+                            if (authState.user?.role == Role.MODERATOR || authState.user?.username == comment.name) {
                                 IconButton(onClick = { postViewModel.deleteComment(comment.id) }) {
                                     Icon(Icons.Default.Delete, contentDescription = "Eliminar Comentario", tint = MaterialTheme.colorScheme.error)
                                 }
@@ -124,8 +125,10 @@ fun PostDetailScreen(navController: NavController, postViewModel: PostViewModel,
                     )
                     IconButton(onClick = {
                         if (newCommentText.isNotBlank()) {
-                            postViewModel.addComment(newCommentText, authState.username)
-                            newCommentText = ""
+                            authState.user?.username?.let { authorName ->
+                                postViewModel.addComment(newCommentText, authorName)
+                                newCommentText = ""
+                            }
                         }
                     }) {
                         Icon(Icons.Default.Send, contentDescription = "Enviar comentario")

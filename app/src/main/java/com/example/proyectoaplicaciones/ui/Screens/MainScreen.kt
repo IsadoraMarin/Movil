@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectoaplicaciones.Navigation.BottomNavBar
 import com.example.proyectoaplicaciones.Navigation.Screen
+import com.example.proyectoaplicaciones.ui.Screens.GamesScreen
 import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 import com.example.proyectoaplicaciones.viewmodel.PostViewModel
 
@@ -27,6 +28,7 @@ fun MainScreen(mainNavController: NavController, authViewModel: AuthViewModel, p
                 composable(Screen.Noticias.route) { NewsScreen(navController = mainNavController, viewModel = postViewModel, authViewModel = authViewModel) } 
                 composable(Screen.Comunidad.route) { CommunityScreen(navController = mainNavController, viewModel = postViewModel, authViewModel = authViewModel) } 
                 composable(Screen.Profile.route) { ProfileScreen(navController = mainNavController, authViewModel = authViewModel) } 
+                composable(Screen.Games.route) { GamesScreen() }
             }
         }
     }

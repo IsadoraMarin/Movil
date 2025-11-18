@@ -1,6 +1,7 @@
 package com.example.proyectoaplicaciones.ui.screens
 
 import androidx.compose.foundation.clickable
+import com.example.proyectoaplicaciones.Data.Model.Role
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -68,7 +69,7 @@ fun PopularScreen(navController: NavController, viewModel: PostViewModel, authVi
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(post.score.toString(), style = MaterialTheme.typography.bodySmall)
                                 Spacer(modifier = Modifier.weight(1f))
-                                if (authState.isModerator) {
+                                if (authState.user?.role == Role.MODERATOR) {
                                     IconButton(onClick = { viewModel.deletePost(post.id) }) {
                                         Icon(Icons.Default.Delete, contentDescription = "Eliminar Post", tint = MaterialTheme.colorScheme.error)
                                     }

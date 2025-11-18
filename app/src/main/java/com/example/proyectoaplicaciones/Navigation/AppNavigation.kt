@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.proyectoaplicaciones.ui.Screens.GamesScreen
 import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 import com.example.proyectoaplicaciones.viewmodel.PostViewModel
 import com.example.proyectoaplicaciones.ui.screens.*
@@ -13,15 +14,16 @@ sealed class Screen(val route: String) {
     object Welcome : Screen("welcome")
     object Login : Screen("login")
     object Register : Screen("register")
-    object Main : Screen("main") 
+    object Main : Screen("main")
     object Popular : Screen("popular")
     object Noticias : Screen("noticias")
     object Comunidad : Screen("comunidad")
     object Profile : Screen("profile")
-    object EditProfile : Screen("editProfile") 
+    object EditProfile : Screen("editProfile")
     object CreatePost : Screen("createPost")
     object PostDetail : Screen("postDetail")
     object Favorites : Screen("favorites")
+    object Games : Screen("games") // Nueva pantalla de juegos
 }
 
 @Composable
@@ -42,7 +44,7 @@ fun AppNavigation(navController: NavHostController) {
         composable(Screen.Main.route) {
             MainScreen(mainNavController = navController, authViewModel = authViewModel, postViewModel = postViewModel)
         }
-        
+
         composable(Screen.EditProfile.route) {
             EditProfileScreen(navController = navController, authViewModel = authViewModel)
         }
@@ -54,6 +56,9 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(Screen.Favorites.route) {
             FavoritesScreen(navController = navController, viewModel = postViewModel)
+        }
+        composable(Screen.Games.route) { // Nueva ruta
+            GamesScreen()
         }
     }
 }

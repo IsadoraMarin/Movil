@@ -2,13 +2,14 @@ package com.example.proyectoaplicaciones.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.proyectoaplicaciones.Data.Model.Role
 import com.example.proyectoaplicaciones.Data.Model.User
-import kotlinx.coroutines.delay
+import com.example.proyectoaplicaciones.Data.Remote.RetrofitInstance
+import com.example.proyectoaplicaciones.Repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 data class AuthUiState(
     val email: String = "",
@@ -20,7 +21,7 @@ data class AuthUiState(
     val authError: String? = null,
     val isLoading: Boolean = false,
     val isAuthSuccessful: Boolean = false, // Evento para navegar
-    val isAuthenticated: Boolean = false, // Estado persistente de autenticaciÃ³n
+    val isAuthenticated: Boolean = false, // Estado persistente de autenticación
     val isGuest: Boolean = false,
     val user: User? = null
 )
@@ -29,6 +30,7 @@ class AuthViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()
+    private val authRepository = AuthRepository(RetrofitInstance.api)
 
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email, isEmailValid = true, authError = null) }
@@ -59,7 +61,7 @@ class AuthViewModel : ViewModel() {
         val password = _uiState.value.password
 
         val isEmailValid = "@" in email
-        val isPasswordValid = password.any { it.isUpperCase() } && password.any { it.isDigit() }
+        val isPasswordValid = password.length > 6
 
         _uiState.update {
             it.copy(
@@ -73,24 +75,41 @@ class AuthViewModel : ViewModel() {
 
     fun login() {
         if (!validateFields()) return
+
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            delay(1500)
-            // Respuesta de Backend ¡Posiblemente funcione mejor con SpringBoot!
-            val role = if (_uiState.value.username.equals("admin", ignoreCase = true)) Role.MODERATOR else Role.USER
-            val user = User(1, _uiState.value.username, role, "fake-token")
-            _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, isAuthenticated = true, isGuest = false, user = user) }
+            _uiState.update { it.copy(isLoading = true, authError = null) }
+            try {
+                val response = authRepository.login(_uiState.value.email, _uiState.value.password)
+                if (response.isSuccessful && response.body() != null) {
+                    _uiState.update { it.copy(isAuthSuccessful = true, isAuthenticated = true, user = response.body()) }
+                } else {
+                    _uiState.update { it.copy(authError = "Login failed: " + response.message()) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(authError = "Login failed: " + e.message) }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
     fun register() {
         if (!validateFields() || _uiState.value.username.isBlank()) return
+
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            delay(2000)
-            //Otra simulacion de Backend
-            val user = User(1, _uiState.value.username, Role.USER, "fake-token")
-            _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, isAuthenticated = true, isGuest = false, user = user) }
+            _uiState.update { it.copy(isLoading = true, authError = null) }
+            try {
+                val response = authRepository.register(_uiState.value.email, _uiState.value.password, _uiState.value.username)
+                if (response.isSuccessful && response.body() != null) {
+                    _uiState.update { it.copy(isAuthSuccessful = true, isAuthenticated = true, user = response.body()) }
+                } else {
+                    _uiState.update { it.copy(authError = "Registration failed: " + response.message()) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(authError = "Registration failed: " + e.message) }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
     
