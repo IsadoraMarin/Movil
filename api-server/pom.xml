@@ -14,6 +14,8 @@
     <name>api-server</name>
     <description>Backend for mobile applications project</description>
     <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
     </properties>
     <dependencies>
@@ -48,6 +50,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <versions>5.7.1</versions>
             <scope>test</scope>
         </dependency>
     </dependencies>

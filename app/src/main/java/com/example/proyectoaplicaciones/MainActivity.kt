@@ -14,18 +14,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Ajuste visual para usar el contenido en pantalla completa (opcional)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
 
-        // Composable principal de la app
+
         setContent {
             ProyectoAplicacionesTheme {
 
-                // Creamos el controlador de navegación
+
                 val navController = rememberNavController()
 
-                // Mostramos la navegación principal
+
                 Surface {
                     AppNavigation(navController = navController)
                 }

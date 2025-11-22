@@ -26,11 +26,10 @@ data class AuthUiState(
     val user: User? = null
 )
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(RetrofitInstance.api)) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()
-    private val authRepository = AuthRepository(RetrofitInstance.api)
 
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email, isEmailValid = true, authError = null) }

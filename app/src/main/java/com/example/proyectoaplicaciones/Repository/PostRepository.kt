@@ -3,11 +3,9 @@ package com.example.proyectoaplicaciones.Repository
 import com.example.proyectoaplicaciones.Data.Model.Comentarios
 import com.example.proyectoaplicaciones.Data.Model.Post
 import com.example.proyectoaplicaciones.Data.Model.Rating
-import com.example.proyectoaplicaciones.Data.Remote.RetroFitInstance
+import com.example.proyectoaplicaciones.Data.Remote.ApiService
 
-class PostRepository {
-    private val apiService = RetroFitInstance.api
-
+class PostRepository(private val apiService: ApiService) {
 
     suspend fun getPosts(): List<Post> {
         return apiService.getPosts()

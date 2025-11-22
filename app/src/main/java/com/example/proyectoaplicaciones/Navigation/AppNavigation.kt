@@ -5,10 +5,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.proyectoaplicaciones.ui.Screens.GamesScreen
 import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 import com.example.proyectoaplicaciones.viewmodel.PostViewModel
 import com.example.proyectoaplicaciones.ui.screens.*
+import com.example.proyectoaplicaciones.ui.Screens.GamesScreen
+
 
 sealed class Screen(val route: String) {
     object Welcome : Screen("welcome")

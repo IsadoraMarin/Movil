@@ -17,12 +17,10 @@ data class GameUiState(
     val error: String? = null
 )
 
-class GameViewModel : ViewModel() {
+class GameViewModel(private val gameRepository: GameRepository = GameRepository(ExternalRetrofitInstance.api)) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState = _uiState.asStateFlow()
-
-    private val gameRepository = GameRepository(ExternalRetrofitInstance.api)
 
     init {
         fetchPopularGames()
