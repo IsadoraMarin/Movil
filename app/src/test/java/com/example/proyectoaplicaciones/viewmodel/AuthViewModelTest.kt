@@ -18,7 +18,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import retrofit2.Response
 
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantExecutorExtension::class) // <- Usamos la nueva extensión de JUnit 5
+@ExtendWith(InstantExecutorExtension::class)
 class AuthViewModelTest {
 
     @JvmField
