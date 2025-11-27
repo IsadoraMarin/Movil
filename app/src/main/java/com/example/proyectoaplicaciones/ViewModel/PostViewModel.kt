@@ -45,7 +45,7 @@ class PostViewModel(private val postRepository: PostRepository = PostRepository(
         viewModelScope.launch {
             try {
                 val allPosts = postRepository.getPosts()
-                _newsPosts.value = allPosts.filter { it.id in 1..99 }
+                _newsPosts.value = allPosts.filter { it.id < 100 }
                 _popularPosts.value = allPosts.sortedByDescending { it.score }.take(10)
                 _communityPosts.value = allPosts.filter { it.id >= 100 }
             } catch (e: Exception) {
