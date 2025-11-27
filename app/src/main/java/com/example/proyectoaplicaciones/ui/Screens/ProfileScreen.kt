@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.screens
+package com.example.proyectoaplicaciones.ui.Screens
 
 import android.Manifest
 import android.net.Uri

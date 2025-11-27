@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.screens
+package com.example.proyectoaplicaciones.ui.Screens
 
 import androidx.compose.foundation.layout.*
 import com.example.proyectoaplicaciones.Data.Model.Role
@@ -68,7 +68,7 @@ fun PostDetailScreen(navController: NavController, postViewModel: PostViewModel,
                 Text(text = post.body, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Fila de valoraciones simplificada
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { postViewModel.handleVote(post.id, VoteType.LIKE) }) {
                         Icon(

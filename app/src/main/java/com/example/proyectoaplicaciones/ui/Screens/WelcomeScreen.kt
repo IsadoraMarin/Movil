@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.screens
+package com.example.proyectoaplicaciones.ui.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,7 +21,7 @@ import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 fun WelcomeScreen(navController: NavController, authViewModel: AuthViewModel) {
     val uiState by authViewModel.uiState.collectAsState()
 
-    // Efecto para navegar cuando la autenticación es exitosa
+
     LaunchedEffect(key1 = uiState.isAuthSuccessful) {
         if (uiState.isAuthSuccessful) {
             navController.navigate(Screen.Main.route) {

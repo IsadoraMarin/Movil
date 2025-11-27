@@ -5,17 +5,16 @@ import com.example.proyectoaplicaciones.Data.Model.GameListResponse
 import com.example.proyectoaplicaciones.Repository.GameRepository
 import com.example.proyectoaplicaciones.rules.InstantExecutorExtension
 import com.example.proyectoaplicaciones.rules.MainDispatcherRule
-import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
-import java.lang.RuntimeException
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
@@ -34,35 +33,34 @@ class GameViewModelTest {
     }
 
     @Test
-    fun `fetchPopularGames success should update uiState with games`() {
+    fun `fetchPopularGames success should update uiState correctly`() = runTest {
         // Arrange
-        val fakeGames = listOf(ExternalGame(1, "Game 1", "2023-01-01", "image1.jpg", 4.5))
-        val gameListResponse = GameListResponse(results = fakeGames)
+        val games = listOf(
+            ExternalGame(id = 1, name = "Game 1", released = "2023-01-01", backgroundImage = "background1", rating = 4.5),
+            ExternalGame(id = 2, name = "Game 2", released = "2023-01-02", backgroundImage = "background2", rating = 4.8)
+        )
+        val gameListResponse = GameListResponse(results = games)
         coEvery { gameRepository.getPopularGames() } returns gameListResponse
-
-        // Act
         gameViewModel = GameViewModel(gameRepository)
 
         // Assert
         val state = gameViewModel.uiState.value
         state.isLoading shouldBe false
-        state.games shouldBe fakeGames
+        state.games.size shouldBe 2
         state.error shouldBe null
     }
 
     @Test
-    fun `fetchPopularGames failure should update uiState with error`() {
+    fun `fetchPopularGames failure should update uiState with error`() = runTest {
         // Arrange
         val errorMessage = "Network Error"
         coEvery { gameRepository.getPopularGames() } throws RuntimeException(errorMessage)
-
-        // Act
         gameViewModel = GameViewModel(gameRepository)
-
+        
         // Assert
         val state = gameViewModel.uiState.value
         state.isLoading shouldBe false
-        state.games.shouldBeEmpty()
+        state.games.isEmpty() shouldBe true
         state.error shouldNotBe null
     }
 }

@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.screens
+package com.example.proyectoaplicaciones.ui.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,14 +28,14 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
     val uiState by authViewModel.uiState.collectAsState()
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    // Efecto para navegar cuando el inicio de sesión es exitoso
+
     LaunchedEffect(key1 = uiState.isAuthSuccessful) {
         if (uiState.isAuthSuccessful) {
             navController.navigate(Screen.Main.route) {
-                // Limpiar el stack hasta la pantalla de bienvenida
+
                 popUpTo(Screen.Welcome.route) { inclusive = true }
             }
-            authViewModel.onAuthSuccessNavigated() // Resetear el estado
+            authViewModel.onAuthSuccessNavigated()
         }
     }
 

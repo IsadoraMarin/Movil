@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.screens
+package com.example.proyectoaplicaciones.ui.Screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -102,7 +102,7 @@ fun EditProfileScreen(navController: NavController, authViewModel: AuthViewModel
             Button(
                 onClick = { 
                     // TODO: Llamar al ViewModel para guardar los datos
-                    navController.popBackStack() // Volver atrás después de guardar
+                    navController.popBackStack()
                 },
                 shape = RoundedCornerShape(50),
                 modifier = Modifier.fillMaxWidth()

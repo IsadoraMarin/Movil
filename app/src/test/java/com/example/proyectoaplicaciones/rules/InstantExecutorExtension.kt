@@ -6,10 +6,6 @@ import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-/**
- * Una extensión de JUnit 5 que reemplaza el TaskExecutor de los Componentes de Arquitectura
- * para ejecutar todo de forma síncrona en el mismo hilo. Es el equivalente a InstantTaskExecutorRule de JUnit 4.
- */
 class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
     override fun beforeEach(context: ExtensionContext?) {
         ArchTaskExecutor.getInstance().setDelegate(object : TaskExecutor() {

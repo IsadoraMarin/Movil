@@ -1,4 +1,4 @@
-package com.example.proyectoaplicaciones.ui.screens
+package com.example.proyectoaplicaciones.ui.Screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -79,8 +79,6 @@ fun CreatePostScreen(navController: NavController, postViewModel: PostViewModel,
             Button(
                 onClick = {
                     if (validateFields()) {
-                        // Aquí usamos el userId del estado de autenticación.
-                        // Si no hay un usuario (lo cual es improbable aquí), usamos un ID por defecto.
                         val userId = if(authState.isAuthenticated) authState.username.hashCode() else 0
                         postViewModel.publishPost(
                             title = title,

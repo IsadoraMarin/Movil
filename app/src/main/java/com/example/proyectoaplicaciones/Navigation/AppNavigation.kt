@@ -1,5 +1,6 @@
 package  com.example.proyectoaplicaciones.Navigation
 
+
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -7,7 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.proyectoaplicaciones.viewmodel.AuthViewModel
 import com.example.proyectoaplicaciones.viewmodel.PostViewModel
-import com.example.proyectoaplicaciones.ui.screens.*
+import com.example.proyectoaplicaciones.ui.Screens.WelcomeScreen
+import com.example.proyectoaplicaciones.ui.Screens.LoginScreen
+import com.example.proyectoaplicaciones.ui.Screens.RegisterScreen
+import com.example.proyectoaplicaciones.ui.Screens.MainScreen
+import com.example.proyectoaplicaciones.ui.Screens.EditProfileScreen
+import com.example.proyectoaplicaciones.ui.Screens.CreatePostScreen
+import com.example.proyectoaplicaciones.ui.Screens.PostDetailScreen
+import com.example.proyectoaplicaciones.ui.Screens.FavoritesScreen
 import com.example.proyectoaplicaciones.ui.Screens.GamesScreen
 
 
