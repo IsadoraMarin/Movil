@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://dpg-d4j2mq0bdp1s73fkjudg-a.oregon-postgres.render.com/mydatabase_as42
+    username: myuser
+    password: cIag75kcKXuLK86JbCkf3uhuf4OYzDfb
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
