@@ -3,6 +3,7 @@ package com.example.proyectoaplicaciones.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -17,8 +18,9 @@ import androidx.navigation.NavController
 import com.example.proyectoaplicaciones.navigation.Screen
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) { // Se recibe el ViewModel
+fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
     val uiState by authViewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -31,76 +33,87 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Crear Cuenta", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = uiState.username,
-            onValueChange = { authViewModel.onUsernameChange(it) },
-            label = { Text("Nombre de usuario") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = uiState.email,
-            onValueChange = { authViewModel.onEmailChange(it) },
-            label = { Text("Email") },
-            isError = !uiState.isEmailValid,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true
-        )
-        if (!uiState.isEmailValid && uiState.email.isNotBlank()) {
-            Text("Por favor, introduce un email válido.", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Crear Cuenta") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                }
+            )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField(
+                value = uiState.username,
+                onValueChange = { authViewModel.onUsernameChange(it) },
+                label = { Text("Nombre de usuario") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = uiState.password,
-            onValueChange = { authViewModel.onPasswordChange(it) },
-            label = { Text("Contraseña") },
-            isError = !uiState.isPasswordValid,
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            singleLine = true,
-            trailingIcon = {
-                val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
-                IconButton(onClick = { passwordVisible = !passwordVisible }){
-                    Icon(imageVector = image, contentDescription = description)
+            OutlinedTextField(
+                value = uiState.email,
+                onValueChange = { authViewModel.onEmailChange(it) },
+                label = { Text("Email") },
+                isError = !uiState.isEmailValid,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true
+            )
+            if (!uiState.isEmailValid && uiState.email.isNotBlank()) {
+                Text("Por favor, introduce un email válido.", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = uiState.password,
+                onValueChange = { authViewModel.onPasswordChange(it) },
+                label = { Text("Contraseña") },
+                isError = !uiState.isPasswordValid,
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true,
+                trailingIcon = {
+                    val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                    val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+                    IconButton(onClick = { passwordVisible = !passwordVisible }){
+                        Icon(imageVector = image, contentDescription = description)
+                    }
+                }
+            )
+            if (!uiState.isPasswordValid && uiState.password.isNotBlank()) {
+                Text("Debe tener >5 caracteres, una mayúscula y un número.", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (uiState.isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Button(
+                    onClick = { authViewModel.register() },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = uiState.isEmailValid && uiState.isPasswordValid && uiState.username.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+                ) {
+                    Text("Registrarse")
                 }
             }
-        )
-        if (!uiState.isPasswordValid && uiState.password.isNotBlank()) {
-            Text("Debe tener >5 caracteres, una mayúscula y un número.", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
 
-        if (uiState.isLoading) {
-            CircularProgressIndicator()
-        } else {
-            Button(
-                onClick = { authViewModel.register() },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = uiState.isEmailValid && uiState.isPasswordValid && uiState.username.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
-            ) {
-                Text("Registrarse")
+            uiState.authError?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(it, color = MaterialTheme.colorScheme.error)
             }
-        }
-
-        uiState.authError?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(it, color = MaterialTheme.colorScheme.error)
         }
     }
 }

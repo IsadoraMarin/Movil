@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
@@ -24,10 +23,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostDetailScreen(navController: NavController, authViewModel: AuthViewModel) { // Se recibe el ViewModel
-    val postViewModel: PostViewModel = viewModel()
-    // Se elimina la creación local de authViewModel
-    
+fun PostDetailScreen(
+    navController: NavController, 
+    authViewModel: AuthViewModel, 
+    postViewModel: PostViewModel
+) {
     val selectedPost by postViewModel.selectedPost.collectAsState()
     val comments by postViewModel.comments.collectAsState()
     val favoritePosts by postViewModel.favoritePosts.collectAsState()
@@ -38,6 +38,8 @@ fun PostDetailScreen(navController: NavController, authViewModel: AuthViewModel)
     var newCommentText by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val guestActionMessage = "Necesitas una cuenta para realizar esta acción."
 
     LaunchedEffect(error) {
         error?.let {
@@ -71,15 +73,33 @@ fun PostDetailScreen(navController: NavController, authViewModel: AuthViewModel)
                     
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val currentVote = userVotes[post.id] ?: VoteType.NONE
-                        IconButton(onClick = { postViewModel.handleVote(post.id, VoteType.LIKE) }) {
+                        
+                        // Lógica para botones de Like/Dislike
+                        val voteAction: (VoteType) -> Unit = { voteType ->
+                            if (authState.isAuthenticated) {
+                                postViewModel.handleVote(post.id, voteType)
+                            } else {
+                                scope.launch { snackbarHostState.showSnackbar(guestActionMessage) }
+                            }
+                        }
+
+                        IconButton(onClick = { voteAction(VoteType.LIKE) }) {
                             Icon(Icons.Default.ThumbUp, contentDescription = "Like", tint = if(currentVote == VoteType.LIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current)
                         }
                         Text(post.score.toString())
-                        IconButton(onClick = { postViewModel.handleVote(post.id, VoteType.DISLIKE) }) {
+                        IconButton(onClick = { voteAction(VoteType.DISLIKE) }) {
                             Icon(Icons.Default.ThumbDown, contentDescription = "Dislike", tint = if(currentVote == VoteType.DISLIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current)
                         }
                         Spacer(Modifier.weight(1f))
-                        IconButton(onClick = { postViewModel.toggleFavorite(post) }) {
+
+                        // Lógica para botón de Favorito
+                        IconButton(onClick = { 
+                            if(authState.isAuthenticated) {
+                                postViewModel.toggleFavorite(post)
+                            } else {
+                                scope.launch { snackbarHostState.showSnackbar(guestActionMessage) }
+                            }
+                        }) {
                             val isFavorite = favoritePosts.any { it.id == post.id }
                             Icon(
                                 imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,

@@ -12,16 +12,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectoaplicaciones.navigation.Screen
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen(navController: NavController) {
-    val viewModel: PostViewModel = viewModel()
-    val favoritePosts by viewModel.favoritePosts.collectAsState()
+fun FavoritesScreen(navController: NavController, postViewModel: PostViewModel) { // Se recibe el ViewModel compartido
+    val favoritePosts by postViewModel.favoritePosts.collectAsState()
 
     Scaffold(
         topBar = {
@@ -52,7 +50,7 @@ fun FavoritesScreen(navController: NavController) {
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .clickable {
-                            viewModel.selectPost(post)
+                            postViewModel.selectPost(post)
                             navController.navigate(Screen.PostDetail.route)
                         }
                 ) {

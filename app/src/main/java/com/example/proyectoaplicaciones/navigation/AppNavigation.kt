@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectoaplicaciones.ui.screens.*
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
+import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 sealed class Screen(val route: String, val label: String? = null, val icon: ImageVector? = null) {
     object Welcome : Screen("welcome")
@@ -51,8 +52,9 @@ val bottomNavItems = listOf(
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    // Se crea una ÚNICA instancia del AuthViewModel aquí
+    // Se crea una ÚNICA instancia de cada ViewModel aquí
     val authViewModel: AuthViewModel = viewModel()
+    val postViewModel: PostViewModel = viewModel()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -91,14 +93,14 @@ fun AppNavigation() {
             composable(Screen.Welcome.route) { WelcomeScreen(navController = navController, authViewModel = authViewModel) }
             composable(Screen.Login.route) { LoginScreen(navController = navController, authViewModel = authViewModel) }
             composable(Screen.Register.route) { RegisterScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.Popular.route) { PopularScreen(navController = navController) }
+            composable(Screen.Popular.route) { PopularScreen(navController = navController, postViewModel = postViewModel) }
             composable(Screen.News.route) { NewsScreen() }
             composable(Screen.Games.route) { GamesScreen() }
-            composable(Screen.Community.route) { CommunityScreen(navController = navController, authViewModel = authViewModel) }
+            composable(Screen.Community.route) { CommunityScreen(navController = navController, authViewModel = authViewModel, postViewModel = postViewModel) }
             composable(Screen.Profile.route) { ProfileScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.CreatePost.route) { CreatePostScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.PostDetail.route) { PostDetailScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.Favorites.route) { FavoritesScreen(navController = navController) }
+            composable(Screen.CreatePost.route) { CreatePostScreen(navController = navController, authViewModel = authViewModel, postViewModel = postViewModel) }
+            composable(Screen.PostDetail.route) { PostDetailScreen(navController = navController, authViewModel = authViewModel, postViewModel = postViewModel) }
+            composable(Screen.Favorites.route) { FavoritesScreen(navController = navController, postViewModel = postViewModel) }
             composable(Screen.EditProfile.route) { EditProfileScreen(navController = navController, authViewModel = authViewModel) }
         }
     }

@@ -12,16 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePostScreen(navController: NavController, authViewModel: AuthViewModel) { // Se recibe el ViewModel
-    val postViewModel: PostViewModel = viewModel()
-    // Se elimina la creación local de authViewModel
+fun CreatePostScreen(
+    navController: NavController, 
+    authViewModel: AuthViewModel, 
+    postViewModel: PostViewModel // Se recibe el ViewModel compartido
+) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
     var isTitleEmpty by remember { mutableStateOf(false) }

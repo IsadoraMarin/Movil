@@ -11,19 +11,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectoaplicaciones.navigation.Screen
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 @Composable
-fun PopularScreen(navController: NavController) {
-    val viewModel: PostViewModel = viewModel()
-    val popularPosts by viewModel.popularPosts.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+fun PopularScreen(navController: NavController, postViewModel: PostViewModel) { // Se recibe el ViewModel compartido
+    val popularPosts by postViewModel.popularPosts.collectAsState()
+    val isLoading by postViewModel.isLoading.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchPosts()
+        postViewModel.fetchPosts()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -41,7 +39,7 @@ fun PopularScreen(navController: NavController) {
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
                             .clickable {
-                                viewModel.selectPost(post)
+                                postViewModel.selectPost(post)
                                 navController.navigate(Screen.PostDetail.route)
                             }
                     ) {

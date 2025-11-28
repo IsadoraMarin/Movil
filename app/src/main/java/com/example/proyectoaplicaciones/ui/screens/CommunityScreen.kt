@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.proyectoaplicaciones.data.model.Role
 import com.example.proyectoaplicaciones.navigation.Screen
@@ -23,30 +22,30 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommunityScreen(navController: NavController, authViewModel: AuthViewModel) { // Se recibe el ViewModel
-    val viewModel: PostViewModel = viewModel()
-    // Se elimina la creación local de authViewModel
-    val communityPosts by viewModel.communityPosts.collectAsState()
+fun CommunityScreen(
+    navController: NavController, 
+    authViewModel: AuthViewModel, 
+    postViewModel: PostViewModel // Se recibe el ViewModel compartido
+) {
+    val communityPosts by postViewModel.communityPosts.collectAsState()
     val authState by authViewModel.uiState.collectAsState()
-    val error by viewModel.error.collectAsState()
-    
+    val error by postViewModel.error.collectAsState()
+    val isLoading by postViewModel.isLoading.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(error) {
         error?.let {
             scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = it,
-                    duration = SnackbarDuration.Short
-                )
-                viewModel.clearError()
+                snackbarHostState.showSnackbar(message = it, duration = SnackbarDuration.Short)
+                postViewModel.clearError()
             }
         }
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.fetchPosts()
+        postViewModel.fetchPosts()
     }
 
     Scaffold(
@@ -64,40 +63,44 @@ fun CommunityScreen(navController: NavController, authViewModel: AuthViewModel) 
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                items(communityPosts) { post ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .clickable { 
-                                viewModel.selectPost(post)
-                                navController.navigate(Screen.PostDetail.route)
-                            }
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(post.title, style = MaterialTheme.typography.titleLarge)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(post.body, style = MaterialTheme.typography.bodyMedium, maxLines = 3)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(post.score.toString(), style = MaterialTheme.typography.bodySmall)
-                                Spacer(modifier = Modifier.weight(1f))
-                                
-                                val isAuthor = authState.user?.id == post.userId
-                                val isModerator = authState.user?.role == Role.MODERATOR
-                                if (isAuthor || isModerator) {
-                                    IconButton(onClick = { viewModel.deletePost(post.id) }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Eliminar Post", tint = MaterialTheme.colorScheme.error)
-                                    }
+            if (isLoading && communityPosts.isEmpty()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    items(communityPosts) { post ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .clickable { 
+                                    postViewModel.selectPost(post)
+                                    navController.navigate(Screen.PostDetail.route)
                                 }
-                                Text("Autor ID: ${post.userId}", style = MaterialTheme.typography.bodySmall)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(post.title, style = MaterialTheme.typography.titleLarge)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(post.body, style = MaterialTheme.typography.bodyMedium, maxLines = 3)
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(post.score.toString(), style = MaterialTheme.typography.bodySmall)
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    
+                                    val isAuthor = authState.user?.id == post.userId
+                                    val isModerator = authState.user?.role == Role.MODERATOR
+                                    if (authState.isAuthenticated && (isAuthor || isModerator)) {
+                                        IconButton(onClick = { postViewModel.deletePost(post.id) }) {
+                                            Icon(Icons.Default.Delete, contentDescription = "Eliminar Post", tint = MaterialTheme.colorScheme.error)
+                                        }
+                                    }
+                                    Text("Autor ID: ${post.userId}", style = MaterialTheme.typography.bodySmall)
+                                }
                             }
                         }
                     }

@@ -60,7 +60,7 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
                 val response = authRepository.login(_uiState.value.email, _uiState.value.password)
                 if (response.isSuccessful) {
                     val user = response.body()
-                    _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = _uiState.value.email) }
+                    _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = _uiState.value.email, isGuest = false) }
                 } else {
                      val errorMessage = "Error ${response.code()}: ${response.message()}"
                     _uiState.update { it.copy(isLoading = false, authError = errorMessage) }
@@ -82,7 +82,7 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
                 )
                 if (response.isSuccessful) {
                     val user = response.body()
-                    _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = _uiState.value.email) }
+                    _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = _uiState.value.email, isGuest = false) }
                 } else {
                     val errorMessage = "Error ${response.code()}: ${response.message()}"
                      _uiState.update { it.copy(isLoading = false, authError = errorMessage) }
@@ -94,8 +94,8 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
     }
 
     fun logout() {
-        // Al cerrar sesión, reseteamos todo excepto el estado de invitado
-        _uiState.value = AuthUiState(isGuest = true)
+        // Resetea el estado a completamente deslogueado
+        _uiState.value = AuthUiState()
     }
 
     fun setGuest() {
