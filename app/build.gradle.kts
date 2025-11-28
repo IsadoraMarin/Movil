@@ -74,7 +74,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     // --- Dependencias de Test ---
-    // Core de Testing + JUnit 5
+    // Se configura JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
     testImplementation("androidx.arch.core:core-testing:2.2.0")

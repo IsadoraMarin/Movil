@@ -2,16 +2,16 @@ package com.example.proyectoaplicaciones.rules
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
-import org.junit.jupiter.api.extension.AfterEachCallback
-import org.junit.jupiter.api.extension.BeforeEachCallback
-import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
 
 /**
- * Una extensión de JUnit 5 que reemplaza el TaskExecutor de los Componentes de Arquitectura
- * para ejecutar todo de forma síncrona en el mismo hilo. Es el equivalente a InstantTaskExecutorRule de JUnit 4.
+ * Una regla de JUnit 4 que reemplaza el TaskExecutor de los Componentes de Arquitectura
+ * para ejecutar todo de forma síncrona en el mismo hilo.
  */
-class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
-    override fun beforeEach(context: ExtensionContext?) {
+class InstantExecutorExtension : TestWatcher() {
+    override fun starting(description: Description) {
+        super.starting(description)
         ArchTaskExecutor.getInstance().setDelegate(object : TaskExecutor() {
             override fun executeOnDiskIO(runnable: Runnable) {
                 runnable.run()
@@ -27,7 +27,8 @@ class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
         })
     }
 
-    override fun afterEach(context: ExtensionContext?) {
+    override fun finished(description: Description) {
+        super.finished(description)
         ArchTaskExecutor.getInstance().setDelegate(null)
     }
 }
