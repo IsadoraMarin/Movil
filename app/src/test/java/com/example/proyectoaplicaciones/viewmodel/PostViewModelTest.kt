@@ -49,10 +49,17 @@ class PostViewModelTest {
         )
         coEvery { mockPostRepository.getPosts() } returns fakePosts
 
-        viewModel.fetchPosts()
+        viewModel.communityPosts.test {
+            assertThat(awaitItem()).isEmpty()
 
-        assertThat(viewModel.communityPosts.value.map { it.id }).containsExactly(3, 2, 1).inOrder()
-        assertThat(viewModel.popularPosts.value.map { it.score }).containsExactly(30, 20, 10).inOrder()
+            viewModel.fetchPosts()
+
+            assertThat(awaitItem().map { it.id }).containsExactly(3, 2, 1).inOrder()
+        }
+
+        viewModel.popularPosts.test {
+            assertThat(awaitItem().map { it.score }).containsExactly(30, 20, 10).inOrder()
+        }
     }
 
     @Test
@@ -74,19 +81,18 @@ class PostViewModelTest {
         val fakeComments = listOf(Comentarios(postId = 123, id = 1, name = "Author", body = "Comment body"))
         coEvery { mockPostRepository.getComments(123) } returns fakeComments
 
-        // Act & Assert
-        viewModel.selectedPost.test {
-            assertThat(awaitItem()).isNull() // Estado inicial es nulo
+        viewModel.comments.test {
+            assertThat(awaitItem()).isEmpty()
 
-            viewModel.selectPost(postToSelect) // Acción
+            // Act
+            viewModel.selectPost(postToSelect)
 
-            assertThat(awaitItem()).isEqualTo(postToSelect) // El post seleccionado es el correcto
+            // Assert
+            assertThat(viewModel.selectedPost.value).isEqualTo(postToSelect)
+            assertThat(awaitItem()).isEqualTo(fakeComments)
         }
 
         // Verificamos que la llamada al repositorio se hizo como se esperaba
         coVerify { mockPostRepository.getComments(postId = 123) }
-
-        // Y también verificamos que el StateFlow de comentarios se actualizó
-        assertThat(viewModel.comments.value).isEqualTo(fakeComments)
     }
 }
