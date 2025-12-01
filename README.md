@@ -1,4 +1,6 @@
-dataEsta capa es responsable del acceso a los datos, ya sean remotos (API) o locales.•📁 data/modelContiene las clases de datos (POKOs - Plain Old Kotlin Objects) que representan los objetos de negocio de la aplicación.
+data Esta capa es responsable del acceso a los datos, ya sean remotos (API) o locales.
+
+•📁 data/modelContiene las clases de datos (POKOs - Plain Old Kotlin Objects) que representan los objetos de negocio de la aplicación.
 
 ◦User.kt: Modelo para un usuario de la aplicación.
 
@@ -40,7 +42,9 @@ dataEsta capa es responsable del acceso a los datos, ya sean remotos (API) o loc
 
 •GameViewModel.kt: Obtiene y expone la lista de juegos populares.•NewsViewModel.kt: Obtiene y expone la lista de noticias.
 
-📁 uiEsta capa contiene todos los componentes de la interfaz de usuario, escritos en Jetpack Compose.
+📁 ui
+
+Esta capa contiene todos los componentes de la interfaz de usuario, escritos en Jetpack Compose.
 
 •📁 ui/screensContiene las funciones Composable que representan cada pantalla completa de la aplicación. Estas pantallas son, en su mayoría, "tontas": observan el estado del ViewModel y reaccionan a él.
 
