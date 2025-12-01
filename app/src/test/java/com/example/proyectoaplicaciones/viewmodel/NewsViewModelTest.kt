@@ -48,7 +48,6 @@ class NewsViewModelTest {
         )
         coEvery { mockNewsRepository.getGamingNews() } returns fakeArticles
 
-        // Act & Assert
         viewModel.articles.test {
             // El estado inicial es una lista vacía
             assertThat(awaitItem()).isEmpty()

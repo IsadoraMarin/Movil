@@ -11,15 +11,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-// Se importan explícitamente para forzar la resolución
-import com.example.proyectoaplicaciones.ui.theme.Pink40
-import com.example.proyectoaplicaciones.ui.theme.Pink80
-import com.example.proyectoaplicaciones.ui.theme.Purple40
-import com.example.proyectoaplicaciones.ui.theme.Purple80
-import com.example.proyectoaplicaciones.ui.theme.PurpleGrey40
-import com.example.proyectoaplicaciones.ui.theme.PurpleGrey80
-import com.example.proyectoaplicaciones.ui.theme.Typography
-
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,

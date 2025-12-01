@@ -17,8 +17,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-// Se importa el ViewModel que se va a probar
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
