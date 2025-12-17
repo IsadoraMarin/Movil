@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.proyectoaplicaciones.data.model.Post // <-- IMPORT AÑADIDO
 import com.example.proyectoaplicaciones.navigation.Screen
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 

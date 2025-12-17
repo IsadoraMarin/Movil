@@ -19,13 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.proyectoaplicaciones.viewModel.NewsViewModel
 
 @Composable
-fun NewsScreen() {
-    val viewModel: NewsViewModel = viewModel()
+fun NewsScreen(viewModel: NewsViewModel) { // <-- Acepta el ViewModel como parámetro
     val articles by viewModel.articles.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val context = LocalContext.current

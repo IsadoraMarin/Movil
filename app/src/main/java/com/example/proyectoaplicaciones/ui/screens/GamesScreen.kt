@@ -17,17 +17,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.proyectoaplicaciones.viewModel.GameViewModel
 
 @Composable
-fun GamesScreen() {
-    val viewModel: GameViewModel = viewModel()
+fun GamesScreen(viewModel: GameViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -36,35 +36,50 @@ fun GamesScreen() {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (uiState.isLoading && uiState.games.isEmpty()) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(uiState.games) { game ->
-                    Card(
-                        modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://rawg.io/games/${game.slug}"))
-                            context.startActivity(intent)
-                        }
-                    ) {
-                        Column {
-                            AsyncImage(
-                                model = game.background_image,
-                                contentDescription = game.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.aspectRatio(4f / 3f)
-                            )
-                            Text(
-                                text = game.name,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(8.dp)
-                            )
+        when {
+            // --- INICIO DE LA CORRECCIÓN ---
+            // 1. Mostrar el indicador de carga solo si la lista está vacía
+            uiState.isLoading && uiState.games.isEmpty() -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            // 2. Mostrar un mensaje de error si el campo de error no es nulo
+            uiState.error != null -> {
+                Text(
+                    text = uiState.error!!,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                )
+            }
+            // --- FIN DE LA CORRECCIÓN ---
+            else -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(uiState.games) { game ->
+                        Card(
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://rawg.io/games/${game.slug}"))
+                                context.startActivity(intent)
+                            }
+                        ) {
+                            Column {
+                                AsyncImage(
+                                    model = game.background_image,
+                                    contentDescription = game.name,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.aspectRatio(4f / 3f)
+                                )
+                                Text(
+                                    text = game.name,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -72,4 +87,3 @@ fun GamesScreen() {
         }
     }
 }
-

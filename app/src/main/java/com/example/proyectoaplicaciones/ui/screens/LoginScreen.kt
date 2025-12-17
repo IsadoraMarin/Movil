@@ -10,7 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color // <-- IMPORT AÑADIDO
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -97,9 +97,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                     onClick = { authViewModel.login() },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = uiState.email.isNotBlank() && uiState.password.isNotBlank(),
-                    // --- ESTA ES LA LÍNEA QUE AÑADIRÁS EN VIVO ---
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                    // -------------------------------------------
                 ) {
                     Text("Login")
                 }

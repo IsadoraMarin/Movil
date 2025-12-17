@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ThumbDown
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.proyectoaplicaciones.data.model.Role
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 import com.example.proyectoaplicaciones.viewModel.VoteType
@@ -24,8 +26,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostDetailScreen(
-    navController: NavController, 
-    authViewModel: AuthViewModel, 
+    navController: NavController,
+    authViewModel: AuthViewModel,
     postViewModel: PostViewModel
 ) {
     val selectedPost by postViewModel.selectedPost.collectAsState()
@@ -70,11 +72,10 @@ fun PostDetailScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(post.body, style = MaterialTheme.typography.bodyLarge)
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val currentVote = userVotes[post.id] ?: VoteType.NONE
-                        
-                        // Lógica para botones de Like/Dislike
+
                         val voteAction: (VoteType) -> Unit = { voteType ->
                             if (authState.isAuthenticated) {
                                 postViewModel.handleVote(post.id, voteType)
@@ -84,16 +85,34 @@ fun PostDetailScreen(
                         }
 
                         IconButton(onClick = { voteAction(VoteType.LIKE) }) {
-                            Icon(Icons.Default.ThumbUp, contentDescription = "Like", tint = if(currentVote == VoteType.LIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current)
+                            Icon(Icons.Filled.ThumbUp, contentDescription = "Like", tint = if(currentVote == VoteType.LIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current)
                         }
                         Text(post.score.toString())
                         IconButton(onClick = { voteAction(VoteType.DISLIKE) }) {
-                            Icon(Icons.Default.ThumbDown, contentDescription = "Dislike", tint = if(currentVote == VoteType.DISLIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current)
+                            Icon(Icons.Filled.ThumbDown, contentDescription = "Dislike", tint = if(currentVote == VoteType.DISLIKE) MaterialTheme.colorScheme.primary else LocalContentColor.current)
                         }
                         Spacer(Modifier.weight(1f))
 
-                        // Lógica para botón de Favorito
-                        IconButton(onClick = { 
+                        // --- INICIO DE LA CORRECCIÓN ---
+                        val canDeletePost = authState.user?.let {
+                            it.id == post.userId || it.role == Role.ADMIN || it.role == Role.MODERATOR
+                        } ?: false
+
+                        if (authState.isAuthenticated && canDeletePost) {
+                            IconButton(onClick = {
+                                postViewModel.deletePost(post.id)
+                                navController.popBackStack()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = "Borrar Post",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                        // --- FIN DE LA CORRECCIÓN ---
+
+                        IconButton(onClick = {
                             if(authState.isAuthenticated) {
                                 postViewModel.toggleFavorite(post)
                             } else {
@@ -102,7 +121,7 @@ fun PostDetailScreen(
                         }) {
                             val isFavorite = favoritePosts.any { it.id == post.id }
                             Icon(
-                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                                 contentDescription = "Favorito",
                                 tint = if (isFavorite) MaterialTheme.colorScheme.primary else LocalContentColor.current
                             )
@@ -117,9 +136,27 @@ fun PostDetailScreen(
                 }
                 items(comments) { comment ->
                     Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(comment.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                            Text(comment.body, style = MaterialTheme.typography.bodyMedium)
+                        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(comment.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                                Text(comment.body, style = MaterialTheme.typography.bodyMedium)
+                            }
+
+                            // --- INICIO DE LA CORRECCIÓN ---
+                            val canDeleteComment = authState.user?.let {
+                                it.username == comment.name || it.role == Role.ADMIN || it.role == Role.MODERATOR
+                            } ?: false
+
+                            if (authState.isAuthenticated && canDeleteComment) {
+                                IconButton(onClick = { postViewModel.deleteComment(comment.id) }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Delete,
+                                        contentDescription = "Borrar Comentario",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                            // --- FIN DE LA CORRECCIÓN ---
                         }
                     }
                 }

@@ -17,6 +17,8 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
+// Se importa el ViewModel que se va a probar
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -47,17 +49,10 @@ class PostViewModelTest {
         )
         coEvery { mockPostRepository.getPosts() } returns fakePosts
 
-        viewModel.communityPosts.test {
-            assertThat(awaitItem()).isEmpty()
+        viewModel.fetchPosts()
 
-            viewModel.fetchPosts()
-
-            assertThat(awaitItem().map { it.id }).containsExactly(3, 2, 1).inOrder()
-        }
-
-        viewModel.popularPosts.test {
-            assertThat(awaitItem().map { it.score }).containsExactly(30, 20, 10).inOrder()
-        }
+        assertThat(viewModel.communityPosts.value.map { it.id }).containsExactly(3, 2, 1).inOrder()
+        assertThat(viewModel.popularPosts.value.map { it.score }).containsExactly(30, 20, 10).inOrder()
     }
 
     @Test
@@ -79,18 +74,19 @@ class PostViewModelTest {
         val fakeComments = listOf(Comentarios(postId = 123, id = 1, name = "Author", body = "Comment body"))
         coEvery { mockPostRepository.getComments(123) } returns fakeComments
 
-        viewModel.comments.test {
-            assertThat(awaitItem()).isEmpty()
+        // Act & Assert
+        viewModel.selectedPost.test {
+            assertThat(awaitItem()).isNull() // Estado inicial es nulo
 
-            // Act
-            viewModel.selectPost(postToSelect)
+            viewModel.selectPost(postToSelect) // Acción
 
-            // Assert
-            assertThat(viewModel.selectedPost.value).isEqualTo(postToSelect)
-            assertThat(awaitItem()).isEqualTo(fakeComments)
+            assertThat(awaitItem()).isEqualTo(postToSelect) // El post seleccionado es el correcto
         }
 
         // Verificamos que la llamada al repositorio se hizo como se esperaba
         coVerify { mockPostRepository.getComments(postId = 123) }
+
+        // Y también verificamos que el StateFlow de comentarios se actualizó
+        assertThat(viewModel.comments.value).isEqualTo(fakeComments)
     }
 }

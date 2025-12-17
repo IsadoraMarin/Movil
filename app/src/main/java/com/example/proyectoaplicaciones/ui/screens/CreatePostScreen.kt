@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.proyectoaplicaciones.navigation.Screen // <-- IMPORT AÑADIDO
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
@@ -21,7 +22,7 @@ import com.example.proyectoaplicaciones.viewModel.PostViewModel
 fun CreatePostScreen(
     navController: NavController, 
     authViewModel: AuthViewModel, 
-    postViewModel: PostViewModel // Se recibe el ViewModel compartido
+    postViewModel: PostViewModel
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }

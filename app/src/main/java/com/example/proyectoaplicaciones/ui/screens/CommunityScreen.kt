@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 fun CommunityScreen(
     navController: NavController, 
     authViewModel: AuthViewModel, 
-    postViewModel: PostViewModel // Se recibe el ViewModel compartido
+    postViewModel: PostViewModel
 ) {
     val communityPosts by postViewModel.communityPosts.collectAsState()
     val authState by authViewModel.uiState.collectAsState()
@@ -53,7 +53,7 @@ fun CommunityScreen(
         floatingActionButton = {
             if (authState.isAuthenticated) { 
                 FloatingActionButton(onClick = { navController.navigate(Screen.CreatePost.route) }) {
-                    Icon(Icons.Default.Add, contentDescription = "Crear publicación")
+                    Icon(Icons.Filled.Add, contentDescription = "Crear publicación")
                 }
             }
         }
@@ -87,19 +87,22 @@ fun CommunityScreen(
                                 Text(post.body, style = MaterialTheme.typography.bodyMedium, maxLines = 3)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
+                                    Icon(Icons.Filled.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(post.score.toString(), style = MaterialTheme.typography.bodySmall)
                                     Spacer(modifier = Modifier.weight(1f))
                                     
-                                    val isAuthor = authState.user?.id == post.userId
-                                    val isModerator = authState.user?.role == Role.MODERATOR
-                                    if (authState.isAuthenticated && (isAuthor || isModerator)) {
+                                    // --- INICIO DE LA CORRECCIÓN ---
+                                    val canDelete = authState.user?.let {
+                                        it.id == post.userId || it.role == Role.ADMIN || it.role == Role.MODERATOR
+                                    } ?: false
+
+                                    if (authState.isAuthenticated && canDelete) {
                                         IconButton(onClick = { postViewModel.deletePost(post.id) }) {
-                                            Icon(Icons.Default.Delete, contentDescription = "Eliminar Post", tint = MaterialTheme.colorScheme.error)
+                                            Icon(Icons.Filled.Delete, contentDescription = "Eliminar Post", tint = MaterialTheme.colorScheme.error)
                                         }
                                     }
-                                    Text("Autor ID: ${post.userId}", style = MaterialTheme.typography.bodySmall)
+                                    // --- FIN DE LA CORRECCIÓN ---
                                 }
                             }
                         }

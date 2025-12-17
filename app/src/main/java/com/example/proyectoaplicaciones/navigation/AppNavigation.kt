@@ -1,11 +1,15 @@
 package com.example.proyectoaplicaciones.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Games
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.material.icons.filled.Whatshot
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,57 +24,75 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.proyectoaplicaciones.ui.screens.*
+import com.example.proyectoaplicaciones.ui.screens.CommunityScreen
+import com.example.proyectoaplicaciones.ui.screens.CreatePostScreen
+import com.example.proyectoaplicaciones.ui.screens.EditProfileScreen
+import com.example.proyectoaplicaciones.ui.screens.FavoritesScreen
+import com.example.proyectoaplicaciones.ui.screens.GamesScreen
+import com.example.proyectoaplicaciones.ui.screens.LoginScreen
+import com.example.proyectoaplicaciones.ui.screens.NewsScreen
+import com.example.proyectoaplicaciones.ui.screens.PopularScreen
+import com.example.proyectoaplicaciones.ui.screens.PostDetailScreen
+import com.example.proyectoaplicaciones.ui.screens.ProfileScreen
+import com.example.proyectoaplicaciones.ui.screens.RegisterScreen
+import com.example.proyectoaplicaciones.ui.screens.WelcomeScreen
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
+import com.example.proyectoaplicaciones.viewModel.GameViewModel
+import com.example.proyectoaplicaciones.viewModel.NewsViewModel
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
-sealed class Screen(val route: String, val label: String? = null, val icon: ImageVector? = null) {
-    object Welcome : Screen("welcome")
-    object Login : Screen("login")
-    object Register : Screen("register")
-    object CreatePost : Screen("create_post")
-    object PostDetail : Screen("post_detail")
-    object Favorites : Screen("favorites")
-    object EditProfile : Screen("edit_profile")
-
-    object Popular : Screen("popular", "Populares", Icons.Default.Star)
-    object News : Screen("news", "Noticias", Icons.Default.Info)
-    object Games : Screen("games", "Juegos", Icons.Default.VideogameAsset)
-    object Community : Screen("community", "Comunidad", Icons.Default.Edit)
-    object Profile : Screen("profile", "Perfil", Icons.Default.Person)
-}
-
-val bottomNavItems = listOf(
-    Screen.Popular,
-    Screen.News,
-    Screen.Games,
-    Screen.Community,
-    Screen.Profile
+// --- INICIO DE LA CORRECCIÓN ---
+// 1. Data class para los items de la barra de navegación
+data class NavItem(
+    val label: String,
+    val icon: ImageVector,
+    val route: String
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+// 2. Lista con los items de la barra de navegación
+val navItems = listOf(
+    NavItem(label = "Popular", icon = Icons.Filled.Whatshot, route = Screen.Popular.route),
+    NavItem(label = "Comunidad", icon = Icons.Filled.Language, route = Screen.Community.route),
+    NavItem(label = "Noticias", icon = Icons.Filled.Newspaper, route = Screen.News.route),
+    NavItem(label = "Juegos", icon = Icons.Filled.Games, route = Screen.Games.route),
+    NavItem(label = "Perfil", icon = Icons.Filled.AccountCircle, route = Screen.Profile.route),
+)
+// --- FIN DE LA CORRECCIÓN ---
+
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    // Se crea una ÚNICA instancia de cada ViewModel aquí
+
     val authViewModel: AuthViewModel = viewModel()
     val postViewModel: PostViewModel = viewModel()
+    val newsViewModel: NewsViewModel = viewModel()
+    val gameViewModel: GameViewModel = viewModel()
 
+    // --- INICIO DE LA CORRECCIÓN ---
+    // 3. Obtenemos la ruta actual para saber qué pantallas no deben mostrar la barra
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    val showBottomBar = bottomNavItems.any { it.route == currentRoute }
+    val currentDestination = navBackStackEntry?.destination
+    val currentRoute = currentDestination?.route
 
+    val screensWithoutBottomBar = setOf(
+        Screen.Welcome.route,
+        Screen.Login.route,
+        Screen.Register.route
+    )
+
+    // 4. Usamos Scaffold para darle una estructura a la app (con barra de navegación)
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
-                NavigationBar {
-                    bottomNavItems.forEach { screen ->
+            // Mostrar la barra solo si la ruta actual no está en la lista de exclusión
+            if (currentRoute !in screensWithoutBottomBar) {
+                BottomAppBar {
+                    navItems.forEach { item ->
                         NavigationBarItem(
-                            icon = { Icon(screen.icon!!, contentDescription = screen.label) },
-                            label = { Text(screen.label!!) },
-                            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == screen.route } == true,
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { Text(item.label) },
+                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                             onClick = {
-                                navController.navigate(screen.route) {
+                                navController.navigate(item.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
                                     }
@@ -83,25 +105,49 @@ fun AppNavigation() {
                 }
             }
         }
-    ) { innerPadding ->
+    ) { innerPadding: PaddingValues -> // El NavHost va dentro del contenido del Scaffold
         NavHost(
-            navController = navController,
+            navController = navController, 
             startDestination = Screen.Welcome.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding) // Aplicar el padding del Scaffold
         ) {
-            // Se pasa la instancia compartida a cada pantalla que la necesita
-            composable(Screen.Welcome.route) { WelcomeScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.Login.route) { LoginScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.Register.route) { RegisterScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.Popular.route) { PopularScreen(navController = navController, postViewModel = postViewModel) }
-            composable(Screen.News.route) { NewsScreen() }
-            composable(Screen.Games.route) { GamesScreen() }
-            composable(Screen.Community.route) { CommunityScreen(navController = navController, authViewModel = authViewModel, postViewModel = postViewModel) }
-            composable(Screen.Profile.route) { ProfileScreen(navController = navController, authViewModel = authViewModel) }
-            composable(Screen.CreatePost.route) { CreatePostScreen(navController = navController, authViewModel = authViewModel, postViewModel = postViewModel) }
-            composable(Screen.PostDetail.route) { PostDetailScreen(navController = navController, authViewModel = authViewModel, postViewModel = postViewModel) }
-            composable(Screen.Favorites.route) { FavoritesScreen(navController = navController, postViewModel = postViewModel) }
-            composable(Screen.EditProfile.route) { EditProfileScreen(navController = navController, authViewModel = authViewModel) }
+    // --- FIN DE LA CORRECCIÓN ---
+            composable(Screen.Welcome.route) {
+                WelcomeScreen(navController, authViewModel)
+            }
+            composable(Screen.Login.route) {
+                LoginScreen(navController, authViewModel)
+            }
+            composable(Screen.Register.route) {
+                RegisterScreen(navController, authViewModel)
+            }
+            composable(Screen.Popular.route) {
+                PopularScreen(navController, postViewModel)
+            }
+            composable(Screen.Community.route) {
+                CommunityScreen(navController, authViewModel, postViewModel)
+            }
+            composable(Screen.News.route) {
+                NewsScreen(newsViewModel)
+            }
+            composable(Screen.Games.route) {
+                GamesScreen(gameViewModel)
+            }
+            composable(Screen.Profile.route) {
+                ProfileScreen(navController, authViewModel)
+            }
+            composable(Screen.Favorites.route) {
+                FavoritesScreen(navController, postViewModel)
+            }
+            composable(Screen.PostDetail.route) {
+                PostDetailScreen(navController, authViewModel, postViewModel)
+            }
+            composable(Screen.CreatePost.route) {
+                CreatePostScreen(navController, authViewModel, postViewModel)
+            }
+            composable(Screen.EditProfile.route) {
+                EditProfileScreen(navController, authViewModel)
+            }
         }
     }
 }

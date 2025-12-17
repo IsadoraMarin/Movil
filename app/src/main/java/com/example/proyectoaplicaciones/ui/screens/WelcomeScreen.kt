@@ -18,7 +18,7 @@ import com.example.proyectoaplicaciones.navigation.Screen
 import com.example.proyectoaplicaciones.viewModel.AuthViewModel
 
 @Composable
-fun WelcomeScreen(navController: NavController, authViewModel: AuthViewModel) { // Se recibe el ViewModel
+fun WelcomeScreen(navController: NavController, authViewModel: AuthViewModel) {
     val uiState by authViewModel.uiState.collectAsState()
 
     LaunchedEffect(key1 = uiState.isAuthSuccessful, key2 = uiState.isGuest) {
@@ -43,7 +43,7 @@ fun WelcomeScreen(navController: NavController, authViewModel: AuthViewModel) { 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                imageVector = Icons.Default.Forum,
+                imageVector = Icons.Filled.Forum, // <-- CORREGIDO
                 contentDescription = "App Logo",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(120.dp)

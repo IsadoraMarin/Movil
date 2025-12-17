@@ -7,6 +7,7 @@ import com.example.proyectoaplicaciones.repository.GameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class GameUiState(
@@ -22,12 +23,12 @@ class GameViewModel(private val repository: GameRepository = GameRepository()) :
 
     fun fetchPopularGames() {
         viewModelScope.launch {
-            _uiState.value = GameUiState(isLoading = true)
+            _uiState.update { it.copy(isLoading = true, error = null) } // Usar copy
             try {
                 val games = repository.getPopularGames()
-                _uiState.value = GameUiState(games = games, isLoading = false)
+                _uiState.update { it.copy(games = games, isLoading = false) } // Usar copy
             } catch (e: Exception) {
-                _uiState.value = GameUiState(error = "Error al cargar los juegos: ${e.message}", isLoading = false)
+                _uiState.update { it.copy(error = "Error al cargar los juegos: ${e.message}", isLoading = false) } // Usar copy
             }
         }
     }

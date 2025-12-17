@@ -16,7 +16,7 @@ import com.example.proyectoaplicaciones.navigation.Screen
 import com.example.proyectoaplicaciones.viewModel.PostViewModel
 
 @Composable
-fun PopularScreen(navController: NavController, postViewModel: PostViewModel) { // Se recibe el ViewModel compartido
+fun PopularScreen(navController: NavController, postViewModel: PostViewModel) {
     val popularPosts by postViewModel.popularPosts.collectAsState()
     val isLoading by postViewModel.isLoading.collectAsState()
 
@@ -49,7 +49,8 @@ fun PopularScreen(navController: NavController, postViewModel: PostViewModel) { 
                             Text(post.body, style = MaterialTheme.typography.bodyMedium, maxLines = 3)
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
+                                // --- CORREGIDO ---
+                                Icon(Icons.Filled.ThumbUp, contentDescription = "Puntuación", modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(post.score.toString(), style = MaterialTheme.typography.bodySmall)
                             }

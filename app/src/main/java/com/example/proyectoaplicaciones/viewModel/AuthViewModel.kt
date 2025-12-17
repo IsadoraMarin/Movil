@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyectoaplicaciones.data.model.ErrorResponse
+import com.example.proyectoaplicaciones.data.model.Role
 import com.example.proyectoaplicaciones.data.model.User
+import com.example.proyectoaplicaciones.data.remote.SessionManager
 import com.example.proyectoaplicaciones.repository.AuthRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,7 @@ data class AuthUiState(
     val isPasswordValid: Boolean = true,
     val username: String = "",
     val phone: String = "",
-    val profileImageUri: Uri? = null, // Campo para la imagen de perfil
+    val profileImageUri: Uri? = null,
     val authError: String? = null,
     val isLoading: Boolean = false,
     val isAuthSuccessful: Boolean = false,
@@ -33,6 +35,13 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    init {
+        val loggedInUser = SessionManager.currentUser
+        if (loggedInUser != null) {
+            _uiState.update { it.copy(isAuthenticated = true, user = loggedInUser, email = loggedInUser.email) }
+        }
+    }
 
     fun onProfileImageChange(uri: Uri?) {
         _uiState.update { it.copy(profileImageUri = uri) }
@@ -57,12 +66,34 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, authError = null) }
             try {
-                val response = authRepository.login(_uiState.value.email, _uiState.value.password)
+                val response = authRepository.login(email = _uiState.value.email, password = _uiState.value.password)
                 if (response.isSuccessful) {
-                    val user = response.body()
-                    _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = _uiState.value.email, isGuest = false) }
+                    // --- INICIO DE LA CORRECCIÓN ---
+                    val authResponse = response.body()
+                    if (authResponse != null) {
+                        // 1. Creamos un objeto User a partir de la respuesta del backend.
+                        val user = User(
+                            id = authResponse.id,
+                            username = authResponse.username,
+                            email = authResponse.email,
+                            role = authResponse.role,
+                            token = authResponse.token
+                        )
+                        // 2. Guardamos el usuario con el token en la sesión.
+                        SessionManager.currentUser = user
+                        // 3. Actualizamos la UI.
+                        _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = user.email, isGuest = false) }
+                    } else {
+                        _uiState.update { it.copy(isLoading = false, authError = "Respuesta vacía del servidor") }
+                    }
+                    // --- FIN DE LA CORRECCIÓN ---
                 } else {
-                     val errorMessage = "Error ${response.code()}: ${response.message()}"
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        Gson().fromJson(errorBody, ErrorResponse::class.java).message
+                    } catch (e: Exception) {
+                        "Error ${response.code()}: ${response.message()}"
+                    }
                     _uiState.update { it.copy(isLoading = false, authError = errorMessage) }
                 }
             } catch (e: Exception) {
@@ -81,11 +112,30 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
                     username = _uiState.value.username
                 )
                 if (response.isSuccessful) {
-                    val user = response.body()
-                    _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = _uiState.value.email, isGuest = false) }
+                    // --- INICIO DE LA CORRECCIÓN ---
+                    val authResponse = response.body()
+                    if (authResponse != null) {
+                        val user = User(
+                            id = authResponse.id,
+                            username = authResponse.username,
+                            email = authResponse.email,
+                            role = authResponse.role,
+                            token = authResponse.token
+                        )
+                        SessionManager.currentUser = user
+                        _uiState.update { it.copy(isLoading = false, isAuthSuccessful = true, user = user, isAuthenticated = true, email = user.email, isGuest = false) }
+                    } else {
+                        _uiState.update { it.copy(isLoading = false, authError = "Respuesta vacía del servidor") }
+                    }
+                    // --- FIN DE LA CORRECCIÓN ---
                 } else {
-                    val errorMessage = "Error ${response.code()}: ${response.message()}"
-                     _uiState.update { it.copy(isLoading = false, authError = errorMessage) }
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = try {
+                        Gson().fromJson(errorBody, ErrorResponse::class.java).message
+                    } catch (e: Exception) {
+                        "Error ${response.code()}: ${response.message()}"
+                    }
+                    _uiState.update { it.copy(isLoading = false, authError = errorMessage) }
                 }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, authError = "Error de red: ${e.message}") }
@@ -94,12 +144,20 @@ class AuthViewModel(private val authRepository: AuthRepository = AuthRepository(
     }
 
     fun logout() {
-        // Resetea el estado a completamente deslogueado
+        SessionManager.currentUser = null
         _uiState.value = AuthUiState()
     }
 
     fun setGuest() {
-        _uiState.value = AuthUiState(isGuest = true)
+        _uiState.update { AuthUiState(isGuest = true) }
+    }
+
+    fun grantAdminRole() {
+        _uiState.update {
+            val updatedUser = it.user?.copy(role = Role.ADMIN)
+            SessionManager.currentUser = updatedUser
+            it.copy(user = updatedUser)
+        }
     }
 
     fun onAuthSuccessNavigated() {

@@ -3,18 +3,21 @@ package com.example.proyectoaplicaciones.repository
 import com.example.proyectoaplicaciones.data.model.Article
 import com.example.proyectoaplicaciones.data.remote.GNewsApiService
 import com.example.proyectoaplicaciones.data.remote.GNewsRetrofitInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class NewsRepository(private val gnewsApi: GNewsApiService = GNewsRetrofitInstance.api) {
-
+class NewsRepository(
+    private val gnewsApi: GNewsApiService = GNewsRetrofitInstance.api
+) {
     private val apiKey = "0c52414453c2fdfeeadf53ae05b4ffed"
 
-    suspend fun getGamingNews(): List<Article> {
-        return try {
+    suspend fun getGamingNews(): List<Article> = withContext(Dispatchers.IO) {
+        try {
             val response = gnewsApi.getGamingNews(apiKey = apiKey)
             response.articles
         } catch (e: Exception) {
-            // En caso de error, devuelve una lista vacía para no crashear la app.
-            emptyList()
+            // Relanzar excepción para que ViewModel la maneje
+            throw e
         }
     }
 }

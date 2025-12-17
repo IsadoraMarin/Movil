@@ -104,7 +104,8 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
                 Button(
                     onClick = { authViewModel.register() },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = uiState.isEmailValid && uiState.isPasswordValid && uiState.username.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+                    // --- LÓGICA SIMPLIFICADA ---
+                    enabled = uiState.isEmailValid && uiState.isPasswordValid && uiState.username.isNotBlank()
                 ) {
                     Text("Registrarse")
                 }
